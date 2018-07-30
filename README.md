@@ -28,6 +28,7 @@ The Apereo .NET CAS client provides CAS integration for the Microsoft Windows pl
     * [Building](#building)
     * [Running](#running)
     * [Integration Instructions](#integration-instructions)
+* [DotnetCore](#dotnet-core)
 
 ## Downloads ##
 
@@ -274,3 +275,26 @@ The following web.config configuration section provides a sample trace configura
 The configuration above will produce trace output to the file `C:\inetpub\logs\LogFiles\DotNetCasClient.Log`. This file path is only representative; a convenient and accessible path should be chosen based on deployer requirements.
 
 **Note**: The application pool in which the CAS-enabled .NET application runs must execute under a user with permission to create and write the trace log file.
+
+## Dotnet Core ##
+
+The dotnet core implementation is currently under development. In the current build it has been tested for one use case. Setting up the dotnet core application to use CAS is much easier.
+
+First go into the `Startup.cs` file. and in the `ConfigureServices` function add the folloing code:
+
+```C#
+  services.AddCass(new CasOptions
+  {
+    CasServerUrlPrefix = "REQUIRED",
+    CasServerLoginUrl = "REQUIRED",
+    ServerName = "REQUIRED",
+    TicketValidatorName = TicketValidatorNames.Name,
+    etc.
+  });
+  ```
+
+  This will setup the optiosn for Cas Authentication which will use Cookie Authentication.
+
+  Then in the same file add `app.UseCas()` to the `Configure` Method before it calls `app.UseMvc()`.
+
+  This will map the "/Cas/" paths to use the CasMiddleware which will handle logging in and logging out.
