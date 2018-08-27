@@ -76,6 +76,13 @@ namespace DotNetCoreCas
                     var claimsIdentity = new ClaimsIdentity(
                         claims, _options.AuthenticationScheme);
 
+                    EnhancedUriBuilder ub = new EnhancedUriBuilder();
+                    ub.Path = context.Request.Query["redirect"].ToString();
+                    ub.Query = context.Request.QueryString.ToString();
+                    ub.QueryItems.Remove("redirect");
+                    ub.QueryItems.Remove("ticket");
+                    
+                    context.Response.Redirect(ub.Uri.PathAndQuery);
                     await context.SignInAsync(_options.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                 }
                 else

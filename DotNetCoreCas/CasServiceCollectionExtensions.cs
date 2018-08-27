@@ -30,34 +30,23 @@ namespace DotNetCoreCas
     public static class CasServiceCollectionExtensions
     {
         /// <summary>
-        /// Sets up cookie authentication under the specified Authentication Scheme. This will most likely need
-        /// to change in the future to allow the user to setup cookie authentication how they want to.
+        /// Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+        /// authentication in the project. That must be done separately.
         /// </summary>
         /// <param name="services">Object to add the services to</param>
         /// <param name="configureOptions">The options for Cas Authentication. You must enter the required values.</param>
         /// <returns>The services object to allow for chaining</returns>
         public static IServiceCollection AddCas(this IServiceCollection services, ICasOptions configureOptions)
         {
-            services.AddAuthentication(configureOptions.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/Cas/Login";
-                    options.LogoutPath = "/Cas/Logout";
-                    options.AccessDeniedPath = "/Error/UnauthorizedUser";
-                    options.Cookie.Name = ".CasAuth";
-                    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-                    options.ReturnUrlParameter = "redirect";
-                });
-            //Adds the CAS options to allow for DI Injection into the middleware
-            return services.AddSingleton<ICasOptions>(configureOptions);
+            return services.AddSingleton(configureOptions);
         }
 
         /// <summary>
-        /// Sets the app to use authentication and maps it to use the CasMiddleware when the path starts with /Cas/
+        /// Sets the app to map to use the CasMiddleware when the path starts with /Cas/
         /// </summary>
         /// <param name="app">The object to add Cas to</param>
         /// <returns>The app object to allow for chaining</returns>
         public static IApplicationBuilder UseCas(this IApplicationBuilder app) =>
-            app.UseAuthentication().MapWhen(context => context.Request.Path.Value.StartsWith("/Cas/"), builder => { builder.UseMiddleware<CasMiddleware>(); });
+            app.MapWhen(context => context.Request.Path.Value.StartsWith("/Cas/"), builder => { builder.UseMiddleware<CasMiddleware>(); });
     }
 }
