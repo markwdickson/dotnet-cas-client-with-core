@@ -55,7 +55,7 @@ namespace DotNetCoreCas
                 _options.TicketValidator.Initialize(context, _options);
             }
 
-            if (context.Request.Path.Value.StartsWith("/Cas/Login"))
+            if (context.Request.Path.Value.ToLower().StartsWith("/cas/login"))
             {
                 HttpRequest request = context.Request;
                 if (!Utils.RequestEvaluator.GetRequestIsAppropriateForCasAuthentication(context, _options))

@@ -47,6 +47,6 @@ namespace DotNetCoreCas
         /// <param name="app">The object to add Cas to</param>
         /// <returns>The app object to allow for chaining</returns>
         public static IApplicationBuilder UseCas(this IApplicationBuilder app) =>
-            app.MapWhen(context => context.Request.Path.Value.StartsWith("/Cas/"), builder => { builder.UseMiddleware<CasMiddleware>(); });
+            app.MapWhen(context => context.Request.Path.Value.StartsWith("/Cas/", false, null), builder => { builder.UseMiddleware<CasMiddleware>(); });
     }
 }
