@@ -71,7 +71,6 @@ namespace DotNetCoreCas
                     var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, principal.Identity.Name),
-                    new Claim(ClaimTypes.Role, "Test")
                 };
                     var claimsIdentity = new ClaimsIdentity(
                         claims, _options.AuthenticationScheme);
