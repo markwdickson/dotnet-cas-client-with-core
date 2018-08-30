@@ -112,6 +112,15 @@
             </summary>
             <returns>A string representation of the CasAuthenticationTicket for use in debugging</returns>
         </member>
+        <member name="M:DotNetCoreCas.CasMiddleware.GetClaims(System.String)">
+            <summary>
+            This method will be used to populate the claims for the user. This will need to be
+            overridden by the user to allow for custom claims to be set for the user. The default
+            implementation returns only the name of the user.
+            </summary>
+            <param name="username">Name of the user</param>
+            <returns>A list of claims that defines the user's access to the application</returns>
+        </member>
         <member name="P:DotNetCoreCas.CasOptions.CasServerLoginUrl">
             <summary>
             Defines the exact CAS server login URL.
@@ -297,12 +306,24 @@
             <param name="configureOptions">The options for Cas Authentication. You must enter the required values.</param>
             <returns>The services object to allow for chaining</returns>
         </member>
-        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.UseCas(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.UseCas(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)">
             <summary>
-            Sets the app to map to use the CasMiddleware when the path starts with /Cas/
+            Sets the app to map to use the CasMiddleware when the path starts with the casURL
             </summary>
             <param name="app">The object to add Cas to</param>
+            <param name="casURL">The 'controller' that is going to hit CAS. This
+            should be the same 'controller' for the login url of the cookie auth</param>
             <returns>The app object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.UseCas``1(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)">
+            <summary>
+             Sets the app to map to use the CasMiddleware when the path starts with the casURL
+            </summary>
+            <typeparam name="T">The type of CasMiddleware that the user wants to use</typeparam>
+            <param name="app">The object to add Cas to</param>
+            <param name="casURL">The 'controller' that is going to hit CAS. This
+            should be the same 'controller' for the login url of the cookie auth</param>
+            <returns></returns>
         </member>
         <member name="T:DotNetCoreCas.GatewayStatus">
             <summary>
