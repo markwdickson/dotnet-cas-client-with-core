@@ -84,7 +84,7 @@ namespace CoreExample
 
             app.UseAuthentication();
 
-            app.UseCas();
+            app.UseCas<MyCasMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
