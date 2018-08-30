@@ -66,19 +66,9 @@ namespace DotNetCoreCas
                 {
                     logger.Info("Processing proxy Callback request");
                     var principal = ProcessTicketValidation(context);
-                    var claims = GetClaims(principal.Identity.Name);
-                    
+                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, principal.Identity.Name) };
                     var claimsIdentity = new ClaimsIdentity(claims, _options.AuthenticationScheme);
 
-                    EnhancedUriBuilder ub = new EnhancedUriBuilder
-                    {
-                        Path = context.Request.Query["redirect"].ToString(),
-                        Query = context.Request.QueryString.ToString()
-                    };
-                    ub.QueryItems.Remove("redirect");
-                    ub.QueryItems.Remove("ticket");
-
-                    context.Response.Redirect(ub.Uri.PathAndQuery);
                     await context.SignInAsync(_options.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                 }
                 else
@@ -134,14 +124,6 @@ namespace DotNetCoreCas
             }
             return null;
         }
-
-        /// <summary>
-        /// This method will be used to populate the claims for the user. This will need to be
-        /// overridden by the user to allow for custom claims to be set for the user. The default
-        /// implementation returns only the name of the user.
-        /// </summary>
-        /// <param name="username">Name of the user</param>
-        /// <returns>A list of claims that defines the user's access to the application</returns>
-        protected virtual List<Claim> GetClaims(string username) => new List<Claim> { new Claim(ClaimTypes.Name, username) };
+       
     }
 }

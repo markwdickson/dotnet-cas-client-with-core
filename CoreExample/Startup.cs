@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreExample.Middleware;
-using DotNetCoreCas;
+﻿using DotNetCoreCas;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,37 +27,28 @@ namespace CoreExample
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var scheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+            var casOptions = Configuration.GetSection("CasOptions").Get<CasOptions>() ?? new CasOptions
+            {
+                AuthenticationScheme = "CAS"
+            }; ;
 
-            services.AddAuthentication(scheme)
+            services.AddAuthentication(casOptions.AuthenticationScheme)
                 .AddCookie(options =>
+                {
+                    options.LoginPath = "/Auth/Login";
+                    options.LogoutPath = "/Auth/Logout";
+                    options.Cookie.Expiration = new System.TimeSpan(3, 0, 0);
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                })
+                .AddCookie(casOptions.AuthenticationScheme, options =>
                 {
                     options.LoginPath = "/Cas/Login";
                     options.LogoutPath = "/Cas/Logout";
-                    options.AccessDeniedPath = "/Home/UnauthorizedUser";
-                    options.Cookie.Name = ".CasAuth";
+                    options.Cookie.Name = "CasAuth";
+                    options.Cookie.Expiration = new System.TimeSpan(3, 0, 0);
                     options.Cookie.SameSite = SameSiteMode.Strict;
-                    //The url parameter "redirect" is used for CAS. This will
-                    //need to be set if you try to call it another way.
                     options.ReturnUrlParameter = "redirect";
                 });
-
-            //To use more than one authentication provider you will need to set the LoginPath to /Home/Login instead of /Cas/Login
-            //services.AddAuthentication(scheme)
-            //       .AddCookie(options =>
-            //       {
-            //           options.LoginPath = "/Home/Login";
-            //           options.LogoutPath = "/Home/Logout";
-            //           options.AccessDeniedPath = "/Home/UnauthorizedUser";
-            //           options.Cookie.Name = ".CasAuth";
-            //           options.Cookie.SameSite = SameSiteMode.Strict;
-            //       });
-
-
-            //Gets the CasOptions from appsettings.json (you can put your own in secrets.json to override this)
-            var casOptions = Configuration.GetSection("CasOptions").Get<CasOptions>();
-            casOptions.AuthenticationScheme = scheme;
-
             services.AddCas(casOptions);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -84,7 +69,7 @@ namespace CoreExample
 
             app.UseAuthentication();
 
-            app.UseCas<MyCasMiddleware>();
+            app.UseCas();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

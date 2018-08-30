@@ -112,15 +112,6 @@
             </summary>
             <returns>A string representation of the CasAuthenticationTicket for use in debugging</returns>
         </member>
-        <member name="M:DotNetCoreCas.CasMiddleware.GetClaims(System.String)">
-            <summary>
-            This method will be used to populate the claims for the user. This will need to be
-            overridden by the user to allow for custom claims to be set for the user. The default
-            implementation returns only the name of the user.
-            </summary>
-            <param name="username">Name of the user</param>
-            <returns>A list of claims that defines the user's access to the application</returns>
-        </member>
         <member name="P:DotNetCoreCas.CasOptions.CasServerLoginUrl">
             <summary>
             Defines the exact CAS server login URL.

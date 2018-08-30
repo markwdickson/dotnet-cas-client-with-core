@@ -7,11 +7,11 @@
     <Copyright />
     <PackageProjectUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/tree/DotnetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/blob/DotnetCore/LICENSE.txt</PackageLicenseUrl>
-    <PackageReleaseNotes>Added ability to override a function in the middleware to get the roles for the user. This can be implemented in the startup class for an asp.net core project.</PackageReleaseNotes>
+    <PackageReleaseNotes>Taking away ability for users to create custom claims. They will have to use another authentication scheme if you want more than just hthe name for authroization.</PackageReleaseNotes>
     <PackageTags>core, CAS, authentication</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.3-alpha</Version>
+    <Version>1.0.4-alpha</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
