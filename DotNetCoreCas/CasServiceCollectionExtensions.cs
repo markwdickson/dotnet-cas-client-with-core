@@ -48,8 +48,8 @@ namespace DotNetCoreCas
         /// <param name="casURL">The 'controller' that is going to hit CAS. This
         /// should be the same 'controller' for the login url of the cookie auth</param>
         /// <returns>The app object to allow for chaining</returns>
-        public static IApplicationBuilder UseCas(this IApplicationBuilder app, string casURL = "/Cas/") =>
-            app.MapWhen(context => context.Request.Path.Value.StartsWith(casURL, false, null), builder => { builder.UseMiddleware<CasMiddleware>(); });
+        public static IApplicationBuilder UseCas(this IApplicationBuilder app, string casURL = "/cas/") =>
+            UseCasPrivate<CasMiddleware>(app, casURL);
 
         /// <summary>
         ///  Sets the app to map to use the CasMiddleware when the path starts with the casURL
@@ -59,7 +59,10 @@ namespace DotNetCoreCas
         /// <param name="casURL">The 'controller' that is going to hit CAS. This
         /// should be the same 'controller' for the login url of the cookie auth</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseCas<T>(this IApplicationBuilder app, string casURL = "/Cas/") where T : CasMiddleware =>
-            app.MapWhen(context => context.Request.Path.Value.StartsWith(casURL, false, null), builder => { builder.UseMiddleware<T>(); });
+        public static IApplicationBuilder UseCas<T>(this IApplicationBuilder app, string casURL = "/cas/") where T : CasMiddleware =>
+            UseCasPrivate<T>(app, casURL);
+
+        private static IApplicationBuilder UseCasPrivate<T>(this IApplicationBuilder app, string casURL) where T : CasMiddleware =>
+            app.MapWhen(context => context.Request.Path.Value.ToLower().StartsWith(casURL.ToLower(), false, null), builder => { builder.UseMiddleware<T>(); });
     }
 }
