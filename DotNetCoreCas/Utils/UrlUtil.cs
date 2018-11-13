@@ -95,9 +95,18 @@ namespace DotNetCoreCas.Utils
             }
             buffer.Append(options.ServerName);
 
-            EnhancedUriBuilder ub = new EnhancedUriBuilder(buffer.ToString());
-            ub.Path = request.Path;
+            buffer.Append(request.PathBase.HasValue ? request.PathBase.Value : string.Empty);
 
+            EnhancedUriBuilder ub = new EnhancedUriBuilder(buffer.ToString());
+            if (ub.Path.Length == 1)
+            {
+                ub.Path = request.Path;
+            }
+            else
+            {
+                ub.Path += request.Path;
+            }
+            
             ub.QueryItems.Add(HttpUtility.ParseQueryString(request.QueryString.Value));
             ub.QueryItems.Remove(options.TicketValidator.ServiceParameterName);
             ub.QueryItems.Remove(options.TicketValidator.ArtifactParameterName);

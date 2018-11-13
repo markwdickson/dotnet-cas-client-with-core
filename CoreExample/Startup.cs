@@ -24,13 +24,13 @@ namespace CoreExample
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
             });
 
             var casOptions = Configuration.GetSection("CasOptions").Get<CasOptions>() ?? new CasOptions
             {
                 AuthenticationScheme = "CAS"
-            }; ;
+            };
 
             services.AddAuthentication(casOptions.AuthenticationScheme)
                 .AddCookie(options =>
@@ -59,6 +59,7 @@ namespace CoreExample
         {
             if (env.IsDevelopment())
             {
+                app.UsePathBase("/castest");
                 app.UseDeveloperExceptionPage();
             }
             else
