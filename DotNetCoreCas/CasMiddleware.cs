@@ -66,7 +66,8 @@ namespace DotNetCoreCas
                 {
                     logger.Info("Processing proxy Callback request");
                     var principal = ProcessTicketValidation(context);
-                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, principal.Identity.Name) };
+
+                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, _options.IsCaseSensitive ? principal.Identity.Name : principal.Identity.Name.ToLower()) };
                     var claimsIdentity = new ClaimsIdentity(claims, _options.AuthenticationScheme);
 
                     await context.SignInAsync(_options.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));

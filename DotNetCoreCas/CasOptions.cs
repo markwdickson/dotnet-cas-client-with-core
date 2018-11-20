@@ -271,6 +271,7 @@ namespace DotNetCoreCas
         /// The authentication scheme that CAS will use.
         /// </summary>
         public string AuthenticationScheme { get; set; } = "CAS";
+        public bool IsCaseSensitive { get; set; } = false;
 
         #endregion
 

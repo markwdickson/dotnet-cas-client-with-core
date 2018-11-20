@@ -7,11 +7,11 @@
     <Copyright />
     <PackageProjectUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/tree/DotnetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/blob/DotnetCore/LICENSE.txt</PackageLicenseUrl>
-    <PackageReleaseNotes>Fixed the functionalllity for case sensitivity</PackageReleaseNotes>
+    <PackageReleaseNotes>This change will force the username to lower case if it is not case sensitvie so that users don't have to worry about it.</PackageReleaseNotes>
     <PackageTags>core, CAS, authentication</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.7-alpha</Version>
+    <Version>1.0.8-alpha</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

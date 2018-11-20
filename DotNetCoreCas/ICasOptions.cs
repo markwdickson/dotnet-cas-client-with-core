@@ -59,5 +59,10 @@ namespace DotNetCoreCas
         string AuthenticationScheme { get; set; }
 
         void Validate();
+
+        /// <summary>
+        /// Sets the case sensitivity for the username.
+        /// </summary>
+        bool IsCaseSensitive { get; set; }
     }
 }

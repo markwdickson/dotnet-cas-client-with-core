@@ -352,6 +352,11 @@
             to be injected through DI into the CasMiddleware.
             </summary>
         </member>
+        <member name="P:DotNetCoreCas.ICasOptions.IsCaseSensitive">
+            <summary>
+            Sets the case sensitivity for the username.
+            </summary>
+        </member>
         <member name="T:DotNetCoreCas.Logging.Category">
             <summary>
             Defines a logging category.
