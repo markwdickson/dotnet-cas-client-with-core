@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +24,11 @@ namespace CoreExample.Controllers
             return SignIn(new ClaimsPrincipal(claimsIdentity), "Cookies");
         }
 
-        public IActionResult Logout() => SignOut("CAS", "Cookies");
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+
+            return RedirectToAction("Logout", "CAS");
+        }
     }
 }

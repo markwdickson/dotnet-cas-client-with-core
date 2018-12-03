@@ -80,7 +80,7 @@ namespace DotNetCoreCas
             else
             {
                 await context.SignOutAsync(_options.AuthenticationScheme);
-                context.Response.Redirect(UtlUtil.ConstructSingleSignOutRedirectUrl(context, _options));
+                context.Response.Redirect(UrlUtil.ConstructSingleSignOutRedirectUrl(context, _options));
             }
         }
 
