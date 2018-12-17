@@ -17,16 +17,16 @@
  * under the License.
  */
 
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using DotNetCoreCas.Logging;
 using DotNetCoreCas.Security;
+using DotNetCoreCas.Services;
 using DotNetCoreCas.Utils;
 using DotNetCoreCas.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace DotNetCoreCas
 {
@@ -37,60 +37,66 @@ namespace DotNetCoreCas
         private static readonly Logger protoLogger = new Logger(Category.Protocol);
         private static readonly Logger securityLogger = new Logger(Category.Security);
 
-        private readonly ICasOptions _options;
-        public CasMiddleware(RequestDelegate next, ICasOptions options)
+        public CasMiddleware(RequestDelegate next)
         {
-            options.Validate();
-            _options = options;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        /// <summary>
+        /// Hits the CAS server either redirecting to the sign in page or validating a ticket.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="casOptions"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
+        public virtual async Task InvokeAsync(HttpContext context, Microsoft.Extensions.Options.IOptions<CasOptions> casOptions, ICasAuthService authService)
         {
-            if (_options.TicketValidator.UrlSuffix == null)
+            var options = casOptions.Value;
+            options.Validate();
+            if (options.TicketValidator.UrlSuffix == null)
             {
                 //Need to initiallize the ticket validator.
                 //Should find a better way to do this on-create
-                _options.TicketValidator.Initialize(context, _options);
+                options.TicketValidator.Initialize(context, options);
             }
 
             if (context.Request.Path.Value.ToLower().StartsWith("/cas/login"))
             {
                 HttpRequest request = context.Request;
-                if (!Utils.RequestEvaluator.GetRequestIsAppropriateForCasAuthentication(context, _options))
+                if (!Utils.RequestEvaluator.GetRequestIsAppropriateForCasAuthentication(context, options))
                 {
                     logger.Debug("AuthenticateRequest bypassed for " + request.Path.ToUriComponent());
-                    context.Response.Redirect(_options.NotAuthorizedUrl);
+                    context.Response.Redirect(options.NotAuthorizedUrl);
                 }
 
-                if (Utils.RequestEvaluator.GetRequestHasCasTicket(context, _options))
+                if (Utils.RequestEvaluator.GetRequestHasCasTicket(context, options))
                 {
                     logger.Info("Processing proxy Callback request");
-                    var principal = ProcessTicketValidation(context);
-
-                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, _options.IsCaseSensitive ? principal.Identity.Name : principal.Identity.Name.ToLower()) };
-                    var claimsIdentity = new ClaimsIdentity(claims, _options.AuthenticationScheme);
-
-                    await context.SignInAsync(_options.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                    await authService.SignIn(context, options, ProcessTicketValidation(context, options));
                 }
                 else
                 {
-                    context.Response.Redirect(UrlUtil.ConstructLoginRedirectUrl(context, _options));
+                    context.Response.Redirect(UrlUtil.ConstructLoginRedirectUrl(context, options));
                 }
             }
             else
             {
-                await context.SignOutAsync(_options.AuthenticationScheme);
+                await authService.SignOut(context, options);
             }
         }
 
-        public ICasPrincipal ProcessTicketValidation(HttpContext context)
-        {
-            HttpRequest request = context.Request;
 
+        /// <summary>
+        /// Processes the ticket from the CAS server to make sure it is valid.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="_options"></param>
+        /// <returns></returns>
+        private ICasPrincipal ProcessTicketValidation(HttpContext context, ICasOptions _options)
+        {
             CasAuthenticationTicket casTicket;
             ICasPrincipal principal = null;
 
-            string ticket = request.Query[_options.TicketValidator.ArtifactParameterName];
+            string ticket = context.Request.Query[_options.TicketValidator.ArtifactParameterName];
 
             try
             {
@@ -100,8 +106,8 @@ namespace DotNetCoreCas
                 // Save the ticket in the FormsAuthTicket.  Encrypt the ticket and send it as a cookie. 
                 casTicket = new CasAuthenticationTicket(
                     ticket,
-                    UrlUtil.RemoveCasArtifactsFromUrl(request.rawUrl(_options).AbsoluteUri, _options),
-                    request.Host.Host,
+                    UrlUtil.RemoveCasArtifactsFromUrl(context.Request.rawUrl(_options).AbsoluteUri, _options),
+                    context.Request.Host.Host,
                     principal.Assertion
                 );
 
@@ -125,6 +131,6 @@ namespace DotNetCoreCas
             }
             return null;
         }
-       
+
     }
 }

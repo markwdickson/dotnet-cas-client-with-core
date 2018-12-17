@@ -16,7 +16,7 @@ namespace CoreExample.Controllers
             return View();
         }
 
-        [Authorize(AuthenticationSchemes = "Cookies")]
+        [Authorize]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

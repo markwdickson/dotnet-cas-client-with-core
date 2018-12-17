@@ -112,6 +112,37 @@
             </summary>
             <returns>A string representation of the CasAuthenticationTicket for use in debugging</returns>
         </member>
+        <member name="M:DotNetCoreCas.CasMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext,Microsoft.Extensions.Options.IOptions{DotNetCoreCas.CasOptions},DotNetCoreCas.Services.ICasAuthService)">
+            <summary>
+            Hits the CAS server either redirecting to the sign in page or validating a ticket.
+            </summary>
+            <param name="context"></param>
+            <param name="casOptions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasMiddleware.ProcessTicketValidation(Microsoft.AspNetCore.Http.HttpContext,DotNetCoreCas.ICasOptions)">
+            <summary>
+            Processes the ticket from the CAS server to make sure it is valid.
+            </summary>
+            <param name="context"></param>
+            <param name="_options"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DotNetCoreCas.CASDefaults">
+            <summary>
+            Default values in CAS Middleware
+            </summary>
+        </member>
+        <member name="F:DotNetCoreCas.CASDefaults.AuthenticationScheme">
+            <summary>
+            Authentication Scheme for CAS
+            </summary>
+        </member>
+        <member name="T:DotNetCoreCas.TicketValidatorNames">
+            <summary>
+            Names for the ticket validator to specify the type of server it is using.
+            </summary>
+        </member>
         <member name="P:DotNetCoreCas.CasOptions.CasServerLoginUrl">
             <summary>
             Defines the exact CAS server login URL.
@@ -283,18 +314,65 @@
             This changes all references to localhost in the url to this current value.
             </summary>
         </member>
-        <member name="P:DotNetCoreCas.CasOptions.AuthenticationScheme">
+        <member name="T:DotNetCoreCas.CasServiceCollectionExtensions">
             <summary>
-            The authentication scheme that CAS will use.
+            A group of functions used to setup an asp.net core application with CAS
             </summary>
         </member>
-        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas(Microsoft.Extensions.DependencyInjection.IServiceCollection,DotNetCoreCas.ICasOptions)">
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{DotNetCoreCas.CasOptions},System.Action{Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions})">
             <summary>
             Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
             authentication in the project. That must be done separately.
             </summary>
             <param name="services">Object to add the services to</param>
-            <param name="configureOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <param name="cookieOptions">The options for the Cookie</param>
+            <returns>The services object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{DotNetCoreCas.CasOptions},System.Action{Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions})">
+            <summary>
+            Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+            authentication in the project. That must be done separately.
+            </summary>
+            <param name="services">Object to add the services to</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <param name="cookieOptions">The options for the Cookie</param>
+            <returns>The services object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{DotNetCoreCas.CasOptions})">
+            <summary>
+            Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+            authentication in the project. That must be done separately.
+            </summary>
+            <param name="services">Object to add the services to</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <returns>The services object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{DotNetCoreCas.CasOptions})">
+            <summary>
+            Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+            authentication in the project. That must be done separately.
+            </summary>
+            <param name="services">Object to add the services to</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <returns>The services object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,DotNetCoreCas.CasOptions)">
+            <summary>
+            Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+            authentication in the project. That must be done separately.
+            </summary>
+            <param name="services">Object to add the services to</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
+            <returns>The services object to allow for chaining</returns>
+        </member>
+        <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.AddCas(Microsoft.Extensions.DependencyInjection.IServiceCollection,DotNetCoreCas.CasOptions)">
+            <summary>
+            Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+            authentication in the project. That must be done separately.
+            </summary>
+            <param name="services">Object to add the services to</param>
+            <param name="casOptions">The options for Cas Authentication. You must enter the required values.</param>
             <returns>The services object to allow for chaining</returns>
         </member>
         <member name="M:DotNetCoreCas.CasServiceCollectionExtensions.UseCas(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)">

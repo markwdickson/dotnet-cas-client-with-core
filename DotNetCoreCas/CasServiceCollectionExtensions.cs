@@ -18,15 +18,21 @@
  */
 
 using System;
+using DotNetCoreCas;
+using DotNetCoreCas.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace DotNetCoreCas
 {
+    /// <summary>
+    /// A group of functions used to setup an asp.net core application with CAS
+    /// </summary>
     public static class CasServiceCollectionExtensions
     {
         /// <summary>
@@ -34,11 +40,48 @@ namespace DotNetCoreCas
         /// authentication in the project. That must be done separately.
         /// </summary>
         /// <param name="services">Object to add the services to</param>
-        /// <param name="configureOptions">The options for Cas Authentication. You must enter the required values.</param>
+        /// <param name="cookieOptions">The options for the Cookie</param>
         /// <returns>The services object to allow for chaining</returns>
-        public static IServiceCollection AddCas(this IServiceCollection services, ICasOptions configureOptions)
+        public static AuthenticationBuilder AddCas(this IServiceCollection services, Action<CookieAuthenticationOptions> cookieOptions) => AddCas<CasAuthService>(services, cookieOptions);
+
+        /// <summary>
+        /// Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+        /// authentication in the project. That must be done separately.
+        /// </summary>
+        /// <param name="services">Object to add the services to</param>
+        /// <param name="cookieOptions">The options for the Cookie</param>
+        /// <returns>The services object to allow for chaining</returns>
+        public static AuthenticationBuilder AddCas<T>(this IServiceCollection services, Action<CookieAuthenticationOptions> cookieOptions) where T : class, ICasAuthService
         {
-            return services.AddSingleton(configureOptions);
+            services.AddScoped<ICasAuthService, T>();
+            return services.AddAuthentication(CASDefaults.AuthenticationScheme)
+                .AddCookie(CASDefaults.AuthenticationScheme, cookieOptions);
+        }
+
+        /// <summary>
+        /// Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+        /// authentication in the project. That must be done separately.
+        /// </summary>
+        /// <param name="services">Object to add the services to</param>
+        /// <returns>The services object to allow for chaining</returns>
+        public static AuthenticationBuilder AddCas(this IServiceCollection services) => AddCas<CasAuthService>(services);
+
+        /// <summary>
+        /// Adds the CasOptions as a singleton for the MiddleWare to use when setting itself up. This does not enable
+        /// authentication in the project. That must be done separately.
+        /// </summary>
+        /// <param name="services">Object to add the services to</param>
+        /// <returns>The services object to allow for chaining</returns>
+        public static AuthenticationBuilder AddCas<T>(this IServiceCollection services) where T : class, ICasAuthService
+        {
+            return services.AddCas<T>(options => {
+                options.LoginPath = "/Cas/Login";
+                options.LogoutPath = "/Cas/Logout";
+                options.Cookie.Name = "CasAuth";
+                options.Cookie.Expiration = new System.TimeSpan(3, 0, 0);
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.ReturnUrlParameter = "redirect";
+            });
         }
 
         /// <summary>
