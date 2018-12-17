@@ -7,7 +7,7 @@
     <Copyright />
     <PackageProjectUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/tree/DotnetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/blob/DotnetCore/LICENSE.txt</PackageLicenseUrl>
-    <PackageReleaseNotes>This change will force the username to lower case if it is not case sensitvie so that users don't have to worry about it.</PackageReleaseNotes>
+    <PackageReleaseNotes>Forcing users to the single signout link.</PackageReleaseNotes>
     <PackageTags>core, CAS, authentication</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
