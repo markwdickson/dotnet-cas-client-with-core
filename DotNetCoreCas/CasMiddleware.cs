@@ -81,6 +81,7 @@ namespace DotNetCoreCas
             else
             {
                 await authService.SignOut(context, options);
+                context.Response.Redirect(UrlUtil.ConstructSingleSignOutRedirectUrl(context, options));
             }
         }
 

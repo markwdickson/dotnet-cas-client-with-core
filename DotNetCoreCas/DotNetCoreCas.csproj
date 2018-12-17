@@ -7,7 +7,7 @@
     <Copyright />
     <PackageProjectUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/tree/DotnetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/JLewinski/dotnet-cas-client-with-core/blob/DotnetCore/LICENSE.txt</PackageLicenseUrl>
-    <PackageReleaseNotes>Forcing users to the single signout link.</PackageReleaseNotes>
+    <PackageReleaseNotes>Simplifies the integration of CAS into the project and allows for greater customization so that only one SignIn is necessary if needing to give users roles</PackageReleaseNotes>
     <PackageTags>core, CAS, authentication</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
