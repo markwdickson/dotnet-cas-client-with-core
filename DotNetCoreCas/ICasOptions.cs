@@ -56,7 +56,6 @@ namespace DotNetCoreCas
         long TicketTimeTolerance { get; set; }
         ITicketValidator TicketValidator { get; }
         TicketValidatorNames TicketValidatorName { get; set; }
-        string AuthenticationScheme { get; set; }
 
         void Validate();
 

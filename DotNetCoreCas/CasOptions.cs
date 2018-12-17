@@ -22,6 +22,20 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DotNetCoreCas
 {
+    /// <summary>
+    /// Default values in CAS Middleware
+    /// </summary>
+    public static class CASDefaults
+    {
+        /// <summary>
+        /// Authentication Scheme for CAS
+        /// </summary>
+        public const string AuthenticationScheme = "CAS";
+    }
+
+    /// <summary>
+    /// Names for the ticket validator to specify the type of server it is using.
+    /// </summary>
     public enum TicketValidatorNames
     {
         SelectATicketValidatorName, Cas10, Cas20, Saml11
@@ -258,7 +272,24 @@ namespace DotNetCoreCas
         /// </summary>
         public string AuthenticationType { get; set; } = "Apereo CAS";
 
-        public Validation.TicketValidator.ITicketValidator TicketValidator { get; private set; }
+        private ITicketValidator ticketValidator;
+
+        public Validation.TicketValidator.ITicketValidator TicketValidator
+        {
+            get
+            {
+                if (ticketValidator == null)
+                {
+                    if (TicketValidatorNames.Cas10 == TicketValidatorName)
+                        ticketValidator = new Cas10TicketValidator();
+                    else if (TicketValidatorNames.Cas20 == TicketValidatorName)
+                        ticketValidator = new Cas20ServiceTicketValidator();
+                    else if (TicketValidatorNames.Saml11 == TicketValidatorName)
+                        ticketValidator = new Saml11TicketValidator();
+                }
+                return ticketValidator;
+            }
+        }
 
         public string CasProxyCallbackUrl { get; internal set; }
 
@@ -267,23 +298,13 @@ namespace DotNetCoreCas
         /// </summary>
         public string LocalHost { get; set; } = "localhost";
 
-        /// <summary>
-        /// The authentication scheme that CAS will use.
-        /// </summary>
-        public string AuthenticationScheme { get; set; } = "CAS";
         public bool IsCaseSensitive { get; set; } = false;
 
         #endregion
 
         public void Validate()
         {
-            if (TicketValidatorNames.Cas10 == TicketValidatorName)
-                TicketValidator = new Cas10TicketValidator();
-            else if (TicketValidatorNames.Cas20 == TicketValidatorName)
-                TicketValidator = new Cas20ServiceTicketValidator();
-            else if (TicketValidatorNames.Saml11 == TicketValidatorName)
-                TicketValidator = new Saml11TicketValidator();
-            else
+            if (TicketValidatorNames.Cas10 != TicketValidatorName && TicketValidatorNames.Cas20 != TicketValidatorName && TicketValidatorNames.Saml11 != TicketValidatorName)
             {
                 throw new System.Exception("This is not a valid CAS options set.", new System.Exception("Incorrect TicketValidatorName"));
             }
@@ -294,7 +315,6 @@ namespace DotNetCoreCas
             {
                 throw new System.Exception("This is not a valid CAS options set");
             }
-
         }
     }
 }
